@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Allura&family=Marck+Script&family=Playball&family=Satisfy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Samsung Design System - One UI Dark Mode for TV+ */
+  --samsung-black: #070a0f;
+  --samsung-surface: #0f141f;
+  --samsung-surface-raised: #181f2f;
+  --samsung-surface-raised-hover: #222b40;
+  --samsung-surface-glass: rgba(14, 20, 32, 0.82);
+  --samsung-surface-glass-border: rgba(255, 255, 255, 0.08);
+  --samsung-border-subtle: #192132;
+  --samsung-border: #232d42;
+  --samsung-border-visible: #384664;
+  --samsung-text-disabled: #616c84;
+  --samsung-text-secondary: #9da8be;
+  --samsung-text-primary: #e6ebf5;
+  --samsung-text-display: #ffffff;
+  
+  /* Samsung Brand Blue */
+  --samsung-blue: #0381fe;
+  --samsung-blue-glow: rgba(3, 129, 254, 0.45);
+  --samsung-blue-soft: rgba(3, 129, 254, 0.16);
+
+  /* Satv Heritage Maroon */
+  --satv-maroon-dark: #3a0303;
+  --satv-maroon: #5b0707;
+  --satv-maroon-light: #7c0d0d;
+}
+
+body {
+  background-color: var(--samsung-black);
+  color: var(--samsung-text-primary);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* TV Glassmorphism Layer - Samsung One UI / Netflix TV Liquid Glass */
+.samsung-glass {
+  background: linear-gradient(135deg, rgba(16, 23, 38, 0.88) 0%, rgba(9, 13, 22, 0.94) 100%);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.samsung-glass-subtle {
+  background: linear-gradient(180deg, rgba(19, 27, 44, 0.82) 0%, rgba(10, 15, 26, 0.88) 100%);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.samsung-glass-card {
+  background: linear-gradient(145deg, rgba(20, 28, 46, 0.75) 0%, rgba(10, 14, 24, 0.85) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.font-slogan-cursive {
+  font-family: 'Satisfy', 'Playball', 'Marck Script', 'Alex Brush', cursive;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* TV focus states matching Samsung TV Plus interactive glow */
+.tv-card-focus:focus,
+.tv-card-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #0381fe, 0 0 30px rgba(3, 129, 254, 0.55), 0 12px 30px -4px rgba(0, 0, 0, 0.8) !important;
+  transform: translateY(-3px) scale(1.04) !important;
+  border-color: #0381fe !important;
+  background-color: #1b2336 !important;
+  z-index: 30;
+}
+
+.tv-nav-focus:focus,
+.tv-nav-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2.5px #0381fe, 0 0 20px rgba(3, 129, 254, 0.45) !important;
+  transform: scale(1.05) !important;
+  border-color: #0381fe !important;
+  z-index: 30;
+}
+
+/* High-clarity channel logo presentation with depth and contrast */
+.channel-logo-img {
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5)) contrast(105%) brightness(102%);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+}
+
+.group:hover .channel-logo-img,
+.group:focus .channel-logo-img,
+.tv-card-focus:focus .channel-logo-img {
+  filter: drop-shadow(0 4px 12px rgba(3, 129, 254, 0.35)) contrast(110%) brightness(108%);
+  transform: scale(1.06);
+}
+
+/* Channel logo cradle box with Samsung TV+ dark radial elevation */
+.channel-logo-cradle {
+  background: radial-gradient(circle at center, #1b2336 0%, #0d121c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.04), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Hide scrollbar for TV view */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Responsive typography and viewport calibration */
+html {
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media screen and (max-width: 640px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* TV Overscan Safe Area & Auto-centering wrapper */
+.tv-safe-container {
+  width: 100%;
+  max-width: 1760px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 20px), 2.5vw);
+  padding-right: max(16px, env(safe-area-inset-right, 20px), 2.5vw);
+  box-sizing: border-box;
+}

@@ -1,0 +1,212 @@
+import React, { useRef } from 'react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { Channel, GroupedChannels, UiDensity } from '../types';
+import ChannelCard from './ChannelCard';
+import { soundService } from '../services/soundService';
+
+interface ChannelRowsProps {
+  groupedChannels: GroupedChannels;
+  favorites: string[];
+  onToggleFavorite: (channelName: string) => void;
+  onSelectChannel: (channel: Channel) => void;
+  onClearFilters: () => void;
+  density?: UiDensity;
+}
+
+const CATEGORY_ORDER: Record<string, number> = {
+  'FAVORITOS': 0,
+  'CANAL': 1,
+  'DOCUMENTÁRIOS': 2,
+  'FILMES & SÉRIES': 3,
+  'FILMES E SÉRIES': 3,
+  'VARIEDADES': 4,
+  'ESPORTES': 5,
+  'ESPN': 6,
+  'PREMIERE': 7,
+  'ESPORTES PPV': 8,
+  'HBO': 9,
+  'NOTÍCIAS': 10,
+  'INFANTIS': 11,
+  'MÚSICA': 12,
+  'RELIGIOSOS': 13,
+};
+
+const RowSection: React.FC<{
+  title: string;
+  isFavRow?: boolean;
+  channels: Channel[];
+  favorites: string[];
+  startIndex: number;
+  onToggleFavorite: (channelName: string) => void;
+  onSelectChannel: (channel: Channel) => void;
+  density: UiDensity;
+}> = ({
+  title,
+  isFavRow = false,
+  channels,
+  favorites,
+  startIndex,
+  onToggleFavorite,
+  onSelectChannel,
+  density,
+}) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    soundService.playNav();
+    if (scrollRef.current) {
+      const scrollAmount = direction === 'left' ? -320 : 320;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  // Fluid auto-scaling card width across mobile and TV screens (calibrated to Photo 1 aesthetic)
+  const cardWidthClass =
+    density === 'large'
+      ? 'w-[64px] min-[360px]:w-[70px] sm:w-[78px] md:w-[84px] lg:w-[90px] xl:w-[96px] shrink-0'
+      : density === 'normal'
+      ? 'w-[56px] min-[360px]:w-[62px] sm:w-[70px] md:w-[76px] lg:w-[82px] xl:w-[86px] shrink-0'
+      : 'w-[50px] min-[360px]:w-[56px] sm:w-[64px] md:w-[70px] lg:w-[74px] xl:w-[78px] shrink-0';
+
+  return (
+    <section className="space-y-2.5">
+      {/* Category Header with Scroll Arrows */}
+      <div className="flex items-center justify-between py-1 px-1">
+        <div className="flex items-center space-x-2.5">
+          {isFavRow ? (
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow" />
+          ) : (
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0381fe] inline-block shadow-lg shadow-[#0381fe]/60 animate-pulse" />
+          )}
+          <h2 className={`text-xs sm:text-sm font-black tracking-wider uppercase ${isFavRow ? 'text-amber-300' : 'text-white'}`}>
+            {title}
+          </h2>
+          <span className={`text-[10px] sm:text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+            isFavRow
+              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30 shadow-sm'
+              : 'bg-white/5 text-slate-300 border-white/10 shadow-sm'
+          }`}>
+            {channels.length} {channels.length === 1 ? 'canal' : 'canais'}
+          </span>
+        </div>
+
+        {/* Horizontal Navigation Buttons */}
+        <div className="flex items-center space-x-1.5">
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => handleScroll('left')}
+            aria-label="Rolar para a esquerda"
+            className="p-1.5 rounded-full bg-white/5 hover:bg-white/15 active:bg-[#0381fe] text-slate-300 hover:text-white border border-white/10 transition cursor-pointer shadow-sm"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => handleScroll('right')}
+            aria-label="Rolar para a direita"
+            className="p-1.5 rounded-full bg-white/5 hover:bg-white/15 active:bg-[#0381fe] text-slate-300 hover:text-white border border-white/10 transition cursor-pointer shadow-sm"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Horizontal Carousel Track */}
+      <div
+        ref={scrollRef}
+        className="flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-0.5"
+      >
+        {channels.map((channel, i) => (
+          <div
+            key={`${channel.name}-${channel.url}`}
+            className={cardWidthClass}
+          >
+            <ChannelCard
+              channel={channel}
+              index={startIndex + i}
+              isFavorite={favorites.includes(channel.name)}
+              onToggleFavorite={onToggleFavorite}
+              onSelect={onSelectChannel}
+              density={density}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const ChannelRows: React.FC<ChannelRowsProps> = ({
+  groupedChannels,
+  favorites,
+  onToggleFavorite,
+  onSelectChannel,
+  onClearFilters,
+  density = 'compact',
+}) => {
+  const sortedGroupNames = Object.keys(groupedChannels).sort((a, b) => {
+    const upperA = a.toUpperCase();
+    const upperB = b.toUpperCase();
+
+    const orderA = CATEGORY_ORDER[upperA] ?? 50;
+    const orderB = CATEGORY_ORDER[upperB] ?? 50;
+
+    if (orderA !== orderB) return orderA - orderB;
+    return a.localeCompare(b, 'pt-BR');
+  });
+
+  if (sortedGroupNames.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="w-16 h-16 bg-slate-800/80 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-500 border border-slate-700/60">
+          <Star className="w-8 h-8 text-amber-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-200 mb-1">
+          Nenhum canal encontrado
+        </h3>
+        <p className="text-sm text-slate-400 max-w-md mx-auto mb-5">
+          Para favoritar um canal, clique na estrelinha no canto superior de qualquer canal.
+        </p>
+        <button
+          onClick={onClearFilters}
+          className="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition shadow-md cursor-pointer"
+        >
+          Limpar Filtros e Ver Todos
+        </button>
+      </div>
+    );
+  }
+
+  let globalIndex = 0;
+
+  return (
+    <div className="tv-safe-container py-3 sm:py-4 space-y-3.5 sm:space-y-4">
+      {sortedGroupNames.map((groupName) => {
+        const channels = groupedChannels[groupName];
+        if (!channels || channels.length === 0) return null;
+
+        const isFavRow = groupName === 'FAVORITOS';
+        const startIndex = globalIndex;
+        globalIndex += channels.length;
+
+        return (
+          <RowSection
+            key={groupName}
+            title={groupName}
+            isFavRow={isFavRow}
+            channels={channels}
+            favorites={favorites}
+            startIndex={startIndex}
+            onToggleFavorite={onToggleFavorite}
+            onSelectChannel={onSelectChannel}
+            density={density}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+export default ChannelRows;

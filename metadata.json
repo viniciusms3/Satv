@@ -1,0 +1,6 @@
+{
+  "name": "SATV - Fire TV & Web IPTV Streaming",
+  "description": "Aplicativo de IPTV ao vivo com interface inspirada no Samsung TV Plus (BigCo One UI), glassmorphism, suporte completo a controle remoto D-Pad, guia de programação EPG e painel interativo esportivo com IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
